@@ -1,0 +1,49 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>All Reports</h1>
+  <a href="{{ url_for('logout') }}" class="btn btn-outline-danger"> Log out </a>
+</div>
+
+<div class="table-responsive">
+  <table class="table table-striped">
+    <caption>
+      All reported community issues in Ward 42
+    </caption>
+
+    <thead>
+      <tr>
+        <th scope="col">Reference</th>
+        <th scope="col">Category</th>
+        <th scope="col">Street</th>
+        <th scope="col">Status</th>
+        <th scope="col">Date</th>
+        <th scope="col">Reporter Name</th>
+        <th scope="col">Reporter Cell</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for report in reports %}
+      <tr>
+        <td>{{ report.reference }}</td>
+        <td>{{ report.category }}</td>
+        <td>{{ report.street }}</td>
+        <td>{{ report.status }}</td>
+        <td>
+          {{ report.created_at.strftime('%d %B %Y') if report.created_at else
+          'Not available' }}
+        </td>
+        <td>{{ report.reporter_name }}</td>
+        <td>{{ report.reporter_cell }}</td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="7">No reports have been submitted yet.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

@@ -76,7 +76,7 @@ def status():
         report = Report.query.filter_by(reference=reference.strip()).first()
 
     return render_template("status.html", reference=reference, report=report)
-    
+
 # Coordinator login route
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -92,7 +92,7 @@ def login():
         ):
             session.clear()
             session["coordinator_id"] = user.id
-            return redirect(url_for("index"))
+            return redirect(url_for("reports"))
 
         error = "Incorrect username or password."
 
@@ -103,5 +103,17 @@ def login():
 def logout():
     session.clear()
     return redirect(url_for("index"))
+
+# Coordinator reports page
+@app.route("/reports")
+def reports():
+    if "coordinator_id" not in session:
+        return redirect(url_for("login"))
+
+    all_reports = Report.query.order_by(
+        Report.created_at.desc()
+    ).all()
+
+    return render_template("reports.html", reports=all_reports)
 
     
