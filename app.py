@@ -116,4 +116,21 @@ def reports():
 
     return render_template("reports.html", reports=all_reports)
 
+# Update report status route
+@app.route("/report/<int:report_id>/status", methods=["POST"])
+def update_status(report_id):
+    if "coordinator_id" not in session:
+        return redirect(url_for("login"))
+
+    report = Report.query.get_or_404(report_id)
+
+    new_status = request.form.get("status")
+
+    if new_status in ["Open", "In progress", "Closed"]:
+        report.status = new_status
+        db.session.commit()
+
+    return redirect(url_for("reports"))
+
+
     
