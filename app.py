@@ -46,4 +46,14 @@ def report():
 
     return render_template("report.html")
 
+@app.route("/status")
+def status():
+    reference = request.args.get("reference")
+    report = None
+
+    if reference:
+        report = Report.query.filter_by(reference=reference.strip()).first()
+
+    return render_template("status.html", reference=reference, report=report)
+
     

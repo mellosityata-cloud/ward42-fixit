@@ -1,0 +1,39 @@
+{% extends "base.html" %} {% block content %}
+
+<h1>Check Report Status</h1>
+
+<form method="get" action="{{ url_for('status') }}">
+  <div class="mb-3">
+    <label for="reference" class="form-label"
+      >Enter your reference number</label
+    >
+    <input
+      type="text"
+      id="reference"
+      name="reference"
+      class="form-control"
+      placeholder="e.g. W42-0001"
+      required
+    />
+  </div>
+
+  <button type="submit" class="btn btn-primary">Check status</button>
+</form>
+
+{% if report %}
+<h2 class="mt-4">Report Details</h2>
+
+<p><strong>Reference:</strong> {{ report.reference }}</p>
+<p><strong>Category:</strong> {{ report.category }}</p>
+<p><strong>Street:</strong> {{ report.street }}</p>
+<p><strong>Status:</strong> {{ report.status }}</p>
+<p>
+  <strong>Date reported:</strong> {{ report.created_at.strftime('%d %B %Y') }}
+</p>
+
+{% elif reference %}
+<p class="mt-4">
+  No report found with that reference number. Please check the number and try
+  again.
+</p>
+{% endif %} {% endblock %}
