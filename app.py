@@ -1,6 +1,7 @@
 import os
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import check_password_hash
 
 app = Flask(__name__)
 
@@ -75,5 +76,32 @@ def status():
         report = Report.query.filter_by(reference=reference.strip()).first()
 
     return render_template("status.html", reference=reference, report=report)
+    
+# Coordinator login route
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    error = None
+
+    if request.method == "POST":
+        user = Coordinator.query.filter_by(
+            username=request.form["username"]
+        ).first()
+
+        if user and check_password_hash(
+            user.password_hash, request.form["password"]
+        ):
+            session.clear()
+            session["coordinator_id"] = user.id
+            return redirect(url_for("index"))
+
+        error = "Incorrect username or password."
+
+    return render_template("login.html", error=error)
+
+# Coordinator logout route
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("index"))
 
     
