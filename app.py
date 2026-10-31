@@ -1,12 +1,16 @@
+import os
 from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///fixit.db"
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
 
 db = SQLAlchemy(app)
 
+
+# Report database model
 class Report(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     reference = db.Column(db.String(20), unique=True, nullable=False)
@@ -18,13 +22,27 @@ class Report(db.Model):
     photo_path = db.Column(db.String(200))
     status = db.Column(db.String(20), nullable=False, default="Open")
     created_at = db.Column(db.DateTime, server_default=db.func.now())
+
+
+# Coordinator database model
+class Coordinator(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    password_hash = db.Column(db.String(256), nullable=False)
+
+
+# Create database tables
 with app.app_context():
     db.create_all()
 
+
+# Home page route
 @app.route("/")
 def index():
     return render_template("index.html")
 
+
+# Report submission route
 @app.route("/report", methods=["GET", "POST"])
 def report():
     if request.method == "POST":
@@ -46,6 +64,8 @@ def report():
 
     return render_template("report.html")
 
+
+# Check report status route
 @app.route("/status")
 def status():
     reference = request.args.get("reference")
