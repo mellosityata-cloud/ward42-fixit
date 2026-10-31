@@ -1,3 +1,86 @@
 {% extends "base.html" %} {% block content %}
 <h1>Report a fault</h1>
+<form
+  method="post"
+  enctype="multipart/form-data"
+  action="{{ url_for('report') }}"
+>
+  <div class="mb-3">
+    <label for="category" class="form-label">Category</label>
+    <select id="category" name="category" class="form-select" required>
+      <option value="">Choose a category</option>
+      <option>Pothole</option>
+      <option>Water leak</option>
+      <option>Streetlight</option>
+      <option>Illegal dumping</option>
+      <option>Other</option>
+    </select>
+  </div>
+
+  <div class="mb-3">
+    <label for="street" class="form-label"
+      >Street and nearest house number or landmark</label
+    >
+    <input
+      type="text"
+      id="street"
+      name="street"
+      class="form-control"
+      required
+    />
+  </div>
+  <div class="mb-3">
+    <label for="description" class="form-label">Description</label>
+    <textarea
+      id="description"
+      name="description"
+      class="form-control"
+      minlength="10"
+      maxlength="500"
+      rows="4"
+      required
+    ></textarea>
+  </div>
+
+  <div class="mb-3">
+    <label for="reporter_name" class="form-label">Your name</label>
+    <input
+      type="text"
+      id="reporter_name"
+      name="reporter_name"
+      class="form-control"
+      autocomplete="name"
+      required
+    />
+  </div>
+
+  <div class="mb-3">
+    <label for="reporter_cell" class="form-label">Cell number</label>
+    <input
+      type="tel"
+      id="reporter_cell"
+      name="reporter_cell"
+      class="form-control"
+      pattern="0[0-9]{9}"
+      autocomplete="tel"
+      required
+    />
+    <div class="form-text">
+      10 digits starting with 0, for example 0821234567
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <label for="photo" class="form-label">Photo (optional)</label>
+    <input
+      type="file"
+      id="photo"
+      name="photo"
+      class="form-control"
+      accept="image/jpeg,image/png,image/webp"
+    />
+  </div>
+
+  <button type="submit" class="btn btn-primary">Submit report</button>
+</form>
 {% endblock %}

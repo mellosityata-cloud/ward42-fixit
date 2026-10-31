@@ -2,3 +2,4 @@ venv/
 *.db
 uploads/
 .env
+__pycache__/
