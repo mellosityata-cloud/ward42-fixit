@@ -4,6 +4,15 @@
 
 <h1>Report a fault</h1>
 
+{% if errors %}
+<div class="alert alert-danger" role="alert">
+  <ul class="mb-0">
+    {% for e in errors %}
+      <li>{{ e }}</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
 {% if error %}
 <div class="alert alert-danger" role="alert">
     {{ error }}

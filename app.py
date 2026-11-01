@@ -2,6 +2,7 @@
 
 import os
 import uuid
+import re
 
 from flask import (
     Flask,
@@ -35,6 +36,15 @@ ALLOWED_TYPES = {"image/jpeg", "image/png", "image/webp"}
 
 db = SQLAlchemy(app)
 
+# Valid report categories
+CATEGORIES = [
+    "Pothole",
+    "Water leak",
+    "Streetlight",
+    "Illegal dumping",
+    "Other"
+]
+
 
 # Check allowed image extensions
 def allowed_file(filename):
@@ -43,6 +53,40 @@ def allowed_file(filename):
         and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
     )
 
+# Validate resident report details
+def validate_report(form):
+    errors = []
+
+    category = form.get("category", "").strip()
+    street = form.get("street", "").strip()
+    description = form.get("description", "").strip()
+    reporter_name = form.get("reporter_name", "").strip()
+    reporter_cell = form.get("reporter_cell", "").strip()
+
+    if category not in CATEGORIES:
+        errors.append("Please choose a valid report category.")
+
+    if not street or len(street) > 200:
+        errors.append(
+            "Please enter a street or landmark (maximum 200 characters)."
+        )
+
+    if not 10 <= len(description) <= 500:
+        errors.append(
+            "Your description must be between 10 and 500 characters."
+        )
+
+    if not reporter_name or len(reporter_name) > 100:
+        errors.append(
+            "Please enter your name (maximum 100 characters)."
+        )
+
+    if not re.fullmatch(r"0\d{9}", reporter_cell):
+        errors.append(
+            "Your cell number must contain 10 digits starting with 0."
+        )
+
+    return errors
 
 # Report database model
 class Report(db.Model):
@@ -80,6 +124,15 @@ def index():
 @app.route("/report", methods=["GET", "POST"])
 def report():
     if request.method == "POST":
+
+        # Validate all report fields before saving anything
+        errors = validate_report(request.form)
+
+        if errors:
+            return render_template(
+                "report.html",
+                errors=errors
+            ), 400
 
         photo = request.files.get("photo")
         photo_filename = None
@@ -119,13 +172,14 @@ def report():
         # Generate report reference
         ref = "W42-" + str(Report.query.count() + 1).zfill(4)
 
+        # Save validated and stripped values
         new_report = Report(
             reference=ref,
-            category=request.form["category"],
-            street=request.form["street"],
-            description=request.form["description"],
-            reporter_name=request.form["reporter_name"],
-            reporter_cell=request.form["reporter_cell"],
+            category=request.form.get("category", "").strip(),
+            street=request.form.get("street", "").strip(),
+            description=request.form.get("description", "").strip(),
+            reporter_name=request.form.get("reporter_name", "").strip(),
+            reporter_cell=request.form.get("reporter_cell", "").strip(),
             photo_path=photo_filename
         )
 
@@ -138,6 +192,7 @@ def report():
         )
 
     return render_template("report.html")
+
 
 
 # Check report status route
