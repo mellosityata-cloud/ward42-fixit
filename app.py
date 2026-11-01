@@ -10,10 +10,12 @@ from flask import (
     session,
     redirect,
     url_for,
-    send_from_directory
+    send_from_directory,
+    jsonify
 )
 
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import func
 from werkzeug.security import check_password_hash
 from werkzeug.utils import secure_filename
 
@@ -201,6 +203,34 @@ def reports():
         reports=all_reports
     )
 
+# Reports analytics API
+@app.route("/api/reports/summary")
+def reports_summary():
+
+    # Only logged-in coordinators can access the API
+    if "coordinator_id" not in session:
+        return jsonify({
+            "error": "Login required"
+        }), 401
+
+    # Count reports by category
+    by_category = db.session.query(
+        Report.category,
+        func.count(Report.id)
+    ).group_by(Report.category).all()
+
+    # Count reports by status
+    by_status = db.session.query(
+        Report.status,
+        func.count(Report.id)
+    ).group_by(Report.status).all()
+
+    # Return the results as JSON
+    return jsonify({
+        "by_category": dict(by_category),
+        "by_status": dict(by_status),
+        "total": Report.query.count()
+    })
 
 # Update report status route
 @app.route("/report/<int:report_id>/status", methods=["POST"])
