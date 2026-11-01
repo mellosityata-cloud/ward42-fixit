@@ -106,9 +106,10 @@
                     {% if report.photo_path %}
 
                         <img
-                            src="{{ url_for('uploaded_photo', filename=report.photo_path) }}"
-                            alt="Photo of {{ report.category }}"
-                            style="max-width: 80px; height: auto;"
+                             src="{{ url_for('uploaded_photo', filename=report.photo_path) }}"
+                             alt="Report photo"
+                             width="80"
+                             loading="lazy"
                         >
 
                     {% else %}

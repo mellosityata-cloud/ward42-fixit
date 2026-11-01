@@ -1,0 +1,17 @@
+@base = http://127.0.0.1:5001
+
+
+### TEST 1: SQL injection
+GET {{base}}/status?reference=%27%20OR%20%271%27=%271
+
+### TEST 2: Missing CSRF token
+POST {{base}}/report
+Content-Type: application/x-www-form-urlencoded
+
+category=Pothole&street=Test%20Street&description=This%20is%20a%20test%20description&reporter_name=Test&reporter_cell=0820000000
+
+### TEST 3: Cross-site scripting (XSS)
+GET {{base}}/status?reference=%3Cscript%3Ealert(%27xss%27)%3C%2Fscript%3E
+
+### TEST 4A: Get a fresh CSRF token
+GET {{base}}/report
