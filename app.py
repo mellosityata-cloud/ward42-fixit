@@ -202,6 +202,13 @@ def reports():
         "reports.html",
         reports=all_reports
     )
+# Coordinator dashboard route
+@app.route("/dashboard")
+def dashboard():
+    if "coordinator_id" not in session:
+        return redirect(url_for("login"))
+
+    return render_template("dashboard.html")
 
 # Reports analytics API
 @app.route("/api/reports/summary")

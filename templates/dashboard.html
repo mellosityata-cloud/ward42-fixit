@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Dashboard</h1>
+
+<p>
+    Total reports:
+    <strong id="total">Loading...</strong>
+</p>
+
+<div
+    id="dashboard-error"
+    class="alert alert-danger d-none"
+    role="alert"
+></div>
+
+<div class="mb-4">
+    <h2>Reports by category</h2>
+
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <caption>Number of reports submitted in each category</caption>
+            <thead>
+                <tr>
+                    <th scope="col">Category</th>
+                    <th scope="col">Number of reports</th>
+                </tr>
+            </thead>
+            <tbody id="category-body">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="mb-4">
+    <h2>Reports by status</h2>
+
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <caption>Number of reports in each status</caption>
+            <thead>
+                <tr>
+                    <th scope="col">Status</th>
+                    <th scope="col">Number of reports</th>
+                </tr>
+            </thead>
+            <tbody id="status-body">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<a href="{{ url_for('reports') }}" class="btn btn-primary">
+    Back to all reports
+</a>
+
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+
+{% endblock %}
