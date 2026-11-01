@@ -1,8 +1,10 @@
 {% extends "base.html" %}
+
 {% block content %}
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1>All Reports</h1>
+
     <a href="{{ url_for('logout') }}" class="btn btn-outline-danger">
         Log out
     </a>
@@ -10,6 +12,7 @@
 
 <div class="table-responsive">
     <table class="table table-striped">
+
         <caption>
             All reported community issues in Ward 42
         </caption>
@@ -23,34 +26,56 @@
                 <th scope="col">Date</th>
                 <th scope="col">Reporter Name</th>
                 <th scope="col">Reporter Cell</th>
+                <th scope="col">Photo</th>
             </tr>
         </thead>
 
         <tbody>
+
             {% for report in reports %}
+
             <tr>
-                <td>{{ report.reference }}</td>
+                <td>
+                    <a href="{{ url_for('report_detail', report_id=report.id) }}">
+                        {{ report.reference }}
+                    </a>
+                </td>
+
                 <td>{{ report.category }}</td>
+
                 <td>{{ report.street }}</td>
 
                 <td>
-                    <form method="post"
-                          action="{{ url_for('update_status', report_id=report.id) }}"
-                          class="d-flex gap-2">
+                    <form
+                        method="post"
+                        action="{{ url_for('update_status', report_id=report.id) }}"
+                        class="d-flex gap-2"
+                    >
 
-                        <label for="status-{{ report.id }}" class="visually-hidden">
+                        <label
+                            for="status-{{ report.id }}"
+                            class="visually-hidden"
+                        >
                             Status for {{ report.reference }}
                         </label>
 
-                        <select name="status"
-                                id="status-{{ report.id }}"
-                                class="form-select form-select-sm">
+                        <select
+                            name="status"
+                            id="status-{{ report.id }}"
+                            class="form-select form-select-sm"
+                        >
 
-                            <option value="Open" {% if report.status == 'Open' %}selected{% endif %}>Open</option>
+                            <option value="Open" {% if report.status == 'Open' %}selected{% endif %}>
+                                Open
+                            </option>
 
-                            <option value="In progress" {% if report.status == 'In progress' %}selected{% endif %}>In progress</option>
+                            <option value="In progress" {% if report.status == 'In progress' %}selected{% endif %}>
+                                In progress
+                            </option>
 
-                            <option value="Closed" {% if report.status == 'Closed' %}selected{% endif %}>Closed</option>
+                            <option value="Closed" {% if report.status == 'Closed' %}selected{% endif %}>
+                                Closed
+                            </option>
 
                         </select>
 
@@ -66,17 +91,42 @@
                 </td>
 
                 <td>{{ report.reporter_name }}</td>
+
                 <td>{{ report.reporter_cell }}</td>
+
+                <td>
+                    {% if report.photo_path %}
+
+                        <img
+                            src="{{ url_for('uploaded_photo', filename=report.photo_path) }}"
+                            alt="Photo of {{ report.category }}"
+                            style="max-width: 80px; height: auto;"
+                        >
+
+                    {% else %}
+
+                        No photo
+
+                    {% endif %}
+                </td>
+
             </tr>
 
             {% else %}
+
             <tr>
-                <td colspan="7">No reports have been submitted yet.</td>
+                <td colspan="8">
+                    No reports have been submitted yet.
+                </td>
             </tr>
+
             {% endfor %}
+
         </tbody>
+
     </table>
 </div>
 
 {% endblock %}
+
 

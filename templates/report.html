@@ -1,5 +1,15 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %}
+
+{% block content %}
+
 <h1>Report a fault</h1>
+
+{% if error %}
+<div class="alert alert-danger" role="alert">
+    {{ error }}
+</div>
+{% endif %}
+
 <form
   method="post"
   enctype="multipart/form-data"
@@ -18,9 +28,9 @@
   </div>
 
   <div class="mb-3">
-    <label for="street" class="form-label"
-      >Street and nearest house number or landmark</label
-    >
+    <label for="street" class="form-label">
+      Street and nearest house number or landmark
+    </label>
     <input
       type="text"
       id="street"
@@ -29,6 +39,7 @@
       required
     />
   </div>
+
   <div class="mb-3">
     <label for="description" class="form-label">Description</label>
     <textarea
@@ -79,8 +90,15 @@
       class="form-control"
       accept="image/jpeg,image/png,image/webp"
     />
+    <div class="form-text">
+      Accepted formats: JPG, JPEG, PNG and WEBP. Maximum file size: 2 MB.
+    </div>
   </div>
 
-  <button type="submit" class="btn btn-primary">Submit report</button>
+  <button type="submit" class="btn btn-primary">
+    Submit report
+  </button>
 </form>
+
 {% endblock %}
+

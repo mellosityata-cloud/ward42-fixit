@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Report Details: {{ report.reference }}</h1>
+
+<p><strong>Reference:</strong> {{ report.reference }}</p>
+
+<p><strong>Category:</strong> {{ report.category }}</p>
+
+<p><strong>Street:</strong> {{ report.street }}</p>
+
+<p><strong>Description:</strong> {{ report.description }}</p>
+
+<p><strong>Status:</strong> {{ report.status }}</p>
+
+<p><strong>Date reported:</strong>
+    {{ report.created_at.strftime('%d %B %Y') if report.created_at else 'Not available' }}
+</p>
+
+<p><strong>Reporter Name:</strong> {{ report.reporter_name }}</p>
+
+<p><strong>Reporter Cell:</strong> {{ report.reporter_cell }}</p>
+
+<h2 class="mt-4">Uploaded Photo</h2>
+
+{% if report.photo_path %}
+
+    <img
+        src="{{ url_for('uploaded_photo', filename=report.photo_path) }}"
+        alt="Photo of {{ report.category }}"
+        class="img-fluid"
+    >
+
+{% else %}
+
+    <p>No photo was uploaded for this report.</p>
+
+{% endif %}
+
+<a href="{{ url_for('reports') }}" class="btn btn-primary mt-3">
+    Back to all reports
+</a>
+
+{% endblock %}
