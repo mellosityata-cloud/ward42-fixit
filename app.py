@@ -126,7 +126,7 @@ with app.app_context():
 # Add security headers to every response
 @app.after_request
 def add_security_headers(response):
-    
+     
     response.headers["Content-Security-Policy"] = (
     "default-src 'self'; "
     "script-src 'self' https://cdn.jsdelivr.net; "
