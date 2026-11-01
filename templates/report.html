@@ -4,6 +4,7 @@
 
 <h1>Report a fault</h1>
 
+<!-- Server-side validation errors -->
 {% if errors %}
 <div class="alert alert-danger" role="alert">
   <ul class="mb-0">
@@ -13,9 +14,11 @@
   </ul>
 </div>
 {% endif %}
+
+<!-- Photo upload errors -->
 {% if error %}
 <div class="alert alert-danger" role="alert">
-    {{ error }}
+  {{ error }}
 </div>
 {% endif %}
 
@@ -24,6 +27,13 @@
   enctype="multipart/form-data"
   action="{{ url_for('report') }}"
 >
+  <!-- CSRF protection token -->
+  <input
+    type="hidden"
+    name="csrf_token"
+    value="{{ csrf_token() }}"
+  />
+
   <div class="mb-3">
     <label for="category" class="form-label">Category</label>
     <select id="category" name="category" class="form-select" required>
@@ -45,6 +55,7 @@
       id="street"
       name="street"
       class="form-control"
+      maxlength="200"
       required
     />
   </div>
@@ -69,6 +80,7 @@
       id="reporter_name"
       name="reporter_name"
       class="form-control"
+      maxlength="100"
       autocomplete="name"
       required
     />
@@ -82,6 +94,7 @@
       name="reporter_cell"
       class="form-control"
       pattern="0[0-9]{9}"
+      maxlength="10"
       autocomplete="tel"
       required
     />
@@ -100,7 +113,8 @@
       accept="image/jpeg,image/png,image/webp"
     />
     <div class="form-text">
-      Accepted formats: JPG, JPEG, PNG and WEBP. Maximum file size: 2 MB.
+      Accepted formats: JPG, JPEG, PNG and WEBP.
+      Maximum file size: 2 MB.
     </div>
   </div>
 
@@ -110,4 +124,5 @@
 </form>
 
 {% endblock %}
+
 

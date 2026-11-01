@@ -58,6 +58,7 @@
                         action="{{ url_for('update_status', report_id=report.id) }}"
                         class="d-flex gap-2"
                     >
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                         <label
                             for="status-{{ report.id }}"

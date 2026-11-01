@@ -4,6 +4,7 @@ import os
 import uuid
 import re
 
+
 from flask import (
     Flask,
     render_template,
@@ -17,6 +18,7 @@ from flask import (
 
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
+from flask_wtf.csrf import CSRFProtect
 from werkzeug.security import check_password_hash
 from werkzeug.utils import secure_filename
 
@@ -30,11 +32,19 @@ app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
 app.config["UPLOAD_FOLDER"] = os.path.join(app.root_path, "uploads")
 app.config["MAX_CONTENT_LENGTH"] = 2 * 1024 * 1024
 
+# Secure session cookie settings
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+app.config["SESSION_COOKIE_SECURE"] = False  # Set to True when deployed over HTTPS
+
 # Allowed photo extensions and content types
 ALLOWED_EXTENSIONS = {"jpg", "jpeg", "png", "webp"}
 ALLOWED_TYPES = {"image/jpeg", "image/png", "image/webp"}
 
 db = SQLAlchemy(app)
+
+# Enable CSRF protection
+csrf = CSRFProtect(app)
 
 # Valid report categories
 CATEGORIES = [
@@ -88,6 +98,7 @@ def validate_report(form):
 
     return errors
 
+
 # Report database model
 class Report(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -112,7 +123,21 @@ class Coordinator(db.Model):
 # Create database tables
 with app.app_context():
     db.create_all()
+# Add security headers to every response
+@app.after_request
+def add_security_headers(response):
+    response.headers["Content-Security-Policy"] = (
+        "default-src 'self'; "
+        "script-src 'self' https://cdn.jsdelivr.net; "
+        "style-src 'self' https://cdn.jsdelivr.net; "
+        "img-src 'self' data:; "
+        "frame-ancestors 'none'"
+    )
 
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+
+    return response
 
 # Home page route
 @app.route("/")
