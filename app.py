@@ -1,12 +1,21 @@
 import os
+import uuid
+
 from flask import Flask, render_template, request, session, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///fixit.db"
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
+
+# File upload settings
+app.config["UPLOAD_FOLDER"] = os.path.join(app.root_path, "uploads")
+app.config["MAX_CONTENT_LENGTH"] = 2 * 1024 * 1024
+
+ALLOWED_EXTENSIONS = {"jpg", "jpeg", "png", "webp"}
 
 db = SQLAlchemy(app)
 
@@ -131,6 +140,17 @@ def update_status(report_id):
         db.session.commit()
 
     return redirect(url_for("reports"))
+
+
+
+# Handle files that exceed the 2 MB upload limit
+@app.errorhandler(413)
+def request_entity_too_large(error):
+    return (
+        "The image you selected is too large. "
+        "Please upload an image smaller than 2 MB.",
+        413
+    )
 
 
     
