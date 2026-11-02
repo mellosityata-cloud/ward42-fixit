@@ -374,7 +374,19 @@ def report_detail(report_id):
         "report_detail.html",
         report=report
     )
+@app.route("/sw.js")
+def service_worker():
+    return send_from_directory(
+        "static",
+        "sw.js",
+        mimetype="application/javascript"
+    )
 
+
+@app.route("/offline")
+def offline():
+    return render_template("offline.html")
+    
 
 
 
