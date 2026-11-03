@@ -1,4 +1,4 @@
-const CACHE_NAME = "ward42-fixit-v1";
+const CACHE_NAME = "ward42-fixit-v2";
 
 const APP_SHELL = [
   "/offline",

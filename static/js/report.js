@@ -61,3 +61,54 @@ form.addEventListener("submit", function (event) {
     event.preventDefault();
   }
 });
+
+// Save and restore report drafts
+const DRAFT_KEY = "ward42-report-draft";
+const draftFields = ["category", "street", "description"];
+
+function saveDraft() {
+  const draft = {};
+
+  draftFields.forEach(function (id) {
+    const field = document.getElementById(id);
+    if (field) {
+      draft[id] = field.value;
+    }
+  });
+
+  try {
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+  } catch (error) {
+    // Storage unavailable or full; the form still works.
+  }
+}
+
+function restoreDraft() {
+  try {
+    const saved = localStorage.getItem(DRAFT_KEY);
+    if (!saved) return;
+
+    const draft = JSON.parse(saved);
+
+    draftFields.forEach(function (id) {
+      const field = document.getElementById(id);
+
+      if (field && typeof draft[id] === "string") {
+        field.value = draft[id];
+      }
+    });
+  } catch (error) {
+    localStorage.removeItem(DRAFT_KEY);
+  }
+}
+
+draftFields.forEach(function (id) {
+  const field = document.getElementById(id);
+
+  if (field) {
+    field.addEventListener("input", saveDraft);
+    field.addEventListener("change", saveDraft);
+  }
+});
+
+restoreDraft();
